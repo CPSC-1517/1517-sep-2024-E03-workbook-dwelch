@@ -18,6 +18,9 @@ namespace OOPsReview
         //      within your class
         //  usually associated with a property
         //  a data member does not have any built-in validation logic
+        private string _Title;
+        private double _Years;
+        private SupervisoryLevel _Level;
 
         //properties
         //  are associated with a single piece of data
@@ -60,10 +63,73 @@ namespace OOPsReview
         ///<summary>
         ///Property: Title
         ///Validation: there must be a character in the string
-        ///Additional: remove any leading or trailing spaces
+        ///Additional: remove any leading or trailing spaces (.Trim())
         /// </summary>
+        public string Title
+        {
+            //accessor (getter)
+            //returns the string associated with this property
+            get { return _Title; }
+            //mutator (setter)
+            //it is within the set that the validation of the data
+            //  is done to determine if the data is acceptable
+            //if all processing of the string is done via the property
+            //  it will ensure that good data is within the associated string
+            set 
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentNullException("Title", "Title is a required field");
+                _Title = value.Trim();
+            }
+        }
+        ///<summary>
+        ///Property: Years
+        ///Validation: the value must be 0 or greater
+        ///Additional: none
+        /// </summary>
+        public double Years
+        {
+            get { return _Years; }
+            set 
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException("Years", value, "Years must be 0 or greater");
+                _Years = value;
+            }
+        }
+        ///<summary>
+        ///Property: StartDate
+        ///Validation: none
+        ///Additional: access to set is private
+        /// </summary>
+        //since the access to this property for th mutator is private ANY validation
+        //  for this data will need to be done elsewhere
+        //possible locations for the validation could be in
+        //  a) a constructor
+        //  b) any method that will alter the data
+        //a private mutator will NOT allow alternation of the data via the property from an
+        //  outside user, however, methods within the class will be still able to
+        //  use the property to alter the data
+        //by default the mutator of a property (fully or auto implemented) is public
+
+        //this property is an auto-implemented property
        
 
+        public DateTime StartDate { get; private set; }
+
+        ///<summary>
+        ///Property: Level
+        ///Validation: none
+        ///Additional: this is an enum using SupervisoryLevel
+        /// </summary>
+        /// 
+
+        //this property could also be could as a fully-implemented property
+        public SupervisoryLevel Level
+        {
+            get { return _Level; }
+            set { _Level = value; }
+        }
 
 
         //constructors
