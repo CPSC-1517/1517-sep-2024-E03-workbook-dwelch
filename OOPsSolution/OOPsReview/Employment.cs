@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonMethods;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -92,7 +93,8 @@ namespace OOPsReview
             get { return _Years; }
             set 
             {
-                if (value < 0)
+                //if (value < 0)
+                if(!Utilities.IsZeroOrPositive(value))
                     throw new ArgumentOutOfRangeException("Years", value, "Years must be 0 or greater");
                 _Years = value;
             }
