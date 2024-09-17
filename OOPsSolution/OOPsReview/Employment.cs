@@ -78,8 +78,8 @@ namespace OOPsReview
             //  it will ensure that good data is within the associated string
             set 
             {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentNullException("Title", "Title is a required field");
+                //if (string.IsNullOrWhiteSpace(value))
+                //    throw new ArgumentNullException("Title", "Title is a required field");
                 _Title = value.Trim();
             }
         }
@@ -180,10 +180,12 @@ namespace OOPsReview
         public Employment(string title, SupervisoryLevel level,
                             DateTime startdate, double years = 0.0)
         {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentNullException("Title", "Title is a required field");
             //all of these data have validation to ensure that the data is correct
             Title = title;
             Level = level;
-            Years = years;
+            //Years = years; coding correctiion below
 
             //one could add valiation, especially if the property has a private set  OR the property
             //  is an auto-implemented property that has restrictions
@@ -205,6 +207,20 @@ namespace OOPsReview
                 throw new ArgumentException($"the start date {startdate} is in the future.", "StartDate");
             }
             StartDate = startdate;
+
+            //the unit test discovered that the years is not being correctly calculate
+            //  if the default value for the parameter is used
+            //the constructor should calculate the years from the supplied startdate
+            //  to the current date
+            if(years > 0.0)
+            {
+                Years = years;
+            }
+            else
+            {
+                TimeSpan days = DateTime.Today - startdate;
+                Years = Math.Round((days.Days / 365.2), 1);
+            }
         }
 
         //methods (aka behaviours)
@@ -242,6 +258,10 @@ namespace OOPsReview
                 throw new ArgumentException($"the start date {startdate} is in the future.", "StartDate");
             }
             StartDate = startdate;
+
+            //reset the years for the new date
+            TimeSpan days = DateTime.Today - startdate;
+            Years = Math.Round((days.Days / 365.2), 1);
         }
     }
 }
