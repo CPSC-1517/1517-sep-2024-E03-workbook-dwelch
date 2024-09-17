@@ -78,8 +78,8 @@ namespace OOPsReview
             //  it will ensure that good data is within the associated string
             set 
             {
-                //if (string.IsNullOrWhiteSpace(value))
-                //    throw new ArgumentNullException("Title", "Title is a required field");
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentNullException("Title", "Title is a required field");
                 _Title = value.Trim();
             }
         }
@@ -131,7 +131,19 @@ namespace OOPsReview
         {
             get { return _Level; }
             //set { _Level = value; } allows for direct altering of the data via the property
-            private set { _Level = value; } //altering of data must be done within the class (constructor/method)
+            private set 
+            {
+                //altering of data must be done within the class (constructor/method)
+
+                //during the unit testing demo, it was discovered that the enum should
+                //  actually have some validation
+                //this would change the property from a possible auto-implmented style
+                //  to having to be implemented as a fully-implement property
+
+                if (!Enum.IsDefined(typeof(SupervisoryLevel), value))
+                    throw new ArgumentException($"Invalid supervisory level value of {value}", "Level");
+                _Level = value; 
+            } 
         }
 
 
@@ -180,8 +192,7 @@ namespace OOPsReview
         public Employment(string title, SupervisoryLevel level,
                             DateTime startdate, double years = 0.0)
         {
-            if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentNullException("Title", "Title is a required field");
+          
             //all of these data have validation to ensure that the data is correct
             Title = title;
             Level = level;

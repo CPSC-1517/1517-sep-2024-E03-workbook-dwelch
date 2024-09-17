@@ -184,58 +184,58 @@ namespace UnitTestingForSystem
         #endregion
 
         #region Invalid Data
-        //// the type [Theory] requires the test to be run once for each [InlineData]
-        //[Theory]
-        //[InlineData(null)]
-        //[InlineData("")]
-        //[InlineData("     ")]
-        //public void Create_New_Greedy_Instance_Throws_Title_Exception(string title)
-        //{
-        //    //Where - Arrange setup
-        //    //string Title = "SAS Lead";
-        //    SupervisoryLevel Level = SupervisoryLevel.TeamMember;
-        //    DateTime StartDate = DateTime.Today;
-        //    double Years = 0;
+        // the type [Theory] requires the test to be run once for each [InlineData]
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("     ")]
+        public void Creating_New_Greedy_Instance_Throws_Title_Exception(string title)
+        {
+            //Where - Arrange setup
+            //string Title = "SAS Lead";
+            SupervisoryLevel Level = SupervisoryLevel.TeamMember;
+            DateTime StartDate = DateTime.Today;
+            double Years = 0;
 
-        //    //When - Act execution
-        //    Action action = () => new Employment(title, Level, StartDate, Years);
+            //When - Act execution
+            Action action = () => new Employment(title, Level, StartDate, Years);
 
-        //    //Then - Assert check
-        //    action.Should().Throw<ArgumentNullException>();
-        //}
+            //Then - Assert check
+            action.Should().Throw<ArgumentNullException>();
+        }
 
-        //[Fact]
-        //public void Create_New_Greedy_Instance_Throws_SupervisorLevel_Exception()
-        //{
-        //    //Where - Arrange setup
-        //    string title = "SAS Lead";
-        //    //create an invalid enum value 
-        //    SupervisoryLevel level = (SupervisoryLevel)15;
-        //    DateTime startdate = DateTime.Today;
-        //    double years = 0;
+        [Fact]
+        public void Creating_New_Greedy_Instance_Throws_SupervisorLevel_Exception()
+        {
+            //Where - Arrange setup
+            string title = "SAS Lead";
+            //create an invalid enum value 
+            SupervisoryLevel level = (SupervisoryLevel)15;
+            DateTime startdate = DateTime.Today;
+            double years = 0;
 
-        //    //When - Act execution
-        //    Action action = () => new Employment(title, level, startdate, years);
+            //When - Act execution
+            Action action = () => new Employment(title, level, startdate, years);
 
-        //    //Then - Assert check
-        //    action.Should().Throw<ArgumentException>().WithMessage("*15*");
-        //}
+            //Then - Assert check
+            action.Should().Throw<ArgumentException>().WithMessage("*15*");
+        }
 
-        //[Fact]
-        //public void Create_New_Greedy_Instance_Throws_StartDate_Future_Exception()
-        //{
-        //    //Where - Arrange setup
-        //    string Title = "SAS Lead";
-        //    SupervisoryLevel Level = SupervisoryLevel.TeamMember;
-        //    DateTime StartDate = DateTime.Parse("2902/10/24");
-        //    double Years = 0;
+        [Fact]
+        public void Create_New_Greedy_Instance_Throws_StartDate_Future_Exception()
+        {
+            //Where - Arrange setup
+            string Title = "SAS Lead";
+            SupervisoryLevel Level = SupervisoryLevel.TeamMember;
+            DateTime StartDate = DateTime.Parse("4902/10/24");
+            double Years = 0;
 
-        //    //When - Act execution
-        //    Action action = () => new Employment(Title, Level, StartDate, Years);
+            //When - Act execution
+            Action action = () => new Employment(Title, Level, StartDate, Years);
 
-        //    //Then - Assert check
-        //    action.Should().Throw<ArgumentException>().WithMessage("*future*");
-        //}
+            //Then - Assert check
+            action.Should().Throw<ArgumentException>().WithMessage("*future*");
+        }
 
         //[Fact]
         //public void Create_New_Greedy_Instance_Throws_Negative_Years_Exception()
@@ -253,25 +253,25 @@ namespace UnitTestingForSystem
         //    action.Should().Throw<ArgumentException>().WithMessage($"*{Years}*");
         //}
 
-        //[Theory]
-        //[InlineData(null)]
-        //[InlineData("")]
-        //[InlineData("      ")]
-        //public void Directly_Change_Title_Throws__Exception(string title)
-        //{
-        //    //Where - Arrange setup
-        //    string Title = "SAS Lead";
-        //    SupervisoryLevel Level = SupervisoryLevel.TeamMember;
-        //    DateTime StartDate = DateTime.Today;
-        //    double Years = 0;
-        //    Employment sut = new Employment(Title, Level, StartDate, Years);
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("      ")]
+        public void Directly_Change_Title_Throws__Exception(string title)
+        {
+            //Where - Arrange setup
+            string Title = "SAS Lead";
+            SupervisoryLevel Level = SupervisoryLevel.TeamMember;
+            DateTime StartDate = DateTime.Today;
+            double Years = 0;
+            Employment sut = new Employment(Title, Level, StartDate, Years);
 
-        //    //When - Act execution
-        //    Action action = () => sut.Title = title;
+            //When - Act execution
+            Action action = () => sut.Title = title;
 
-        //    //Then - Assert check
-        //    action.Should().Throw<ArgumentNullException>();
-        //}
+            //Then - Assert check
+            action.Should().Throw<ArgumentNullException>();
+        }
 
         ////DO NOT use if your class demonstration has made Years set private
         ////[Fact]
@@ -291,24 +291,24 @@ namespace UnitTestingForSystem
         ////    action.Should().Throw<ArgumentOutOfRangeException>().WithMessage("*-5.5*");
         ////}
 
-        //[Fact]
-        //public void Set_The_SupervisoryLevel_Throws_Exception()
-        //{
-        //    //Where - Arrange setup
-        //    string Title = "SAS Lead";
-        //    SupervisoryLevel Level = SupervisoryLevel.TeamLeader;
-        //    DateTime StartDate = new DateTime(2020, 10, 24);
-        //    TimeSpan days = DateTime.Today - StartDate;
-        //    double Years = Math.Round((days.Days / 365.2), 1);
-        //    Employment sut = new Employment(Title, Level, StartDate, Years);
-        //    SupervisoryLevel badLevel = (SupervisoryLevel)15;
-        //    //When - Act execution
-        //    Action action = () => sut.SetEmploymentResponsibilityLevel(badLevel);
+        [Fact]
+        public void Set_The_SupervisoryLevel_Throws_Exception()
+        {
+            //Where - Arrange setup
+            string Title = "SAS Lead";
+            SupervisoryLevel Level = SupervisoryLevel.TeamLeader;
+            DateTime StartDate = new DateTime(2020, 10, 24);
+            TimeSpan days = DateTime.Today - StartDate;
+            double Years = Math.Round((days.Days / 365.2), 1);
+            Employment sut = new Employment(Title, Level, StartDate, Years);
+            SupervisoryLevel badLevel = (SupervisoryLevel)15;
+            //When - Act execution
+            Action action = () => sut.SetEmploymentResponsibilityLevel(badLevel);
 
-        //    //Then - Assert check
-        //    action.Should().Throw<ArgumentException>().WithMessage("*15*");
+            //Then - Assert check
+            action.Should().Throw<ArgumentException>().WithMessage("*15*");
 
-        //}
+        }
 
         //[Fact]
         //public void Set_The_Correct_StartDate_Throws_Exception()
