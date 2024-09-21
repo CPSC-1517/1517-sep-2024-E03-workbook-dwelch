@@ -9,6 +9,7 @@ namespace OOPsReview
     public class Person
     {
         private string _FirstName;
+        private string _LastName;
         public string FirstName 
         {
             get { return _FirstName; } 
@@ -19,9 +20,20 @@ namespace OOPsReview
                 _FirstName = value;
             }
         }
-        public string LastName { get; set; }
+        public string LastName
+        {
+            get { return _LastName; }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentNullException("First Name", "Last name cannot be empty or blank");
+                _LastName = value;
+            }
+        }
         public ResidentAddress Address { get; set; }
         public List<Employment> EmploymentPositions { get; set; } = new List<Employment>();
+
+        public string FullName { get {return LastName + ", " + FirstName; } }
 
         public Person()
         {

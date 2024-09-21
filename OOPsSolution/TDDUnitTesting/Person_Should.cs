@@ -183,12 +183,29 @@ namespace TDDUnitTesting
             sut.LastName.Should().Be(expectedLastName);
         }
 
+        [Fact]
+        public void Retrieve_FullName()
+        {
+            //Arrange (setup the needed code for doing the test)
+            string expectedFullName = "Behold, Lowand";
+            //since we are changing an existing value in the instance,
+            //  one needs the instance in the first place
+            Person sut = new Person("Lowand", "Behold", null, null);
+
+            //Act (this is the action that is under testing)
+            //image the following statement is taken from an programmer's code
+            string fullname = sut.FullName;
+
+            //Assert (check the results of the act against expected values)
+            fullname.Should().Be(expectedFullName);
+        }
+
         //invalid data
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Throw_Exception_Changing_FistName_With_Bad_First_Name(string firstname)
+        public void Throw_Exception_Changing_FirstName_With_Bad_First_Name(string firstname)
         {
             //Arrange (setup the needed code for doing the test)
             Person sut = new Person("don", "welch", null, null);
@@ -201,6 +218,22 @@ namespace TDDUnitTesting
             action.Should().Throw<ArgumentNullException>();
         }
 
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void Throw_Exception_Changing_LastName_With_Bad_Last_Name(string lastname)
+        {
+            //Arrange (setup the needed code for doing the test)
+            Person sut = new Person("don", "welch", null, null);
+
+            //Act (this is the action that is under testing)
+            //the act in this case is the capture of the exception that has been thrown
+            Action action = () => sut.LastName = lastname;
+
+            //Assert (check the results of the act against expected action)
+            action.Should().Throw<ArgumentNullException>();
+        }
         #endregion
 
         #region Methods
