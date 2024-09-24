@@ -5,6 +5,18 @@ namespace TDDUnitTesting
 {
     public class Person_Should
     {
+        #region support methods
+        private Person Make_SUT_Instance()
+        {
+            string firstname = "Lowand";
+            string lastname = "Behold";
+            ResidentAddress address = new ResidentAddress(12, "Maple St.",
+                    "Edmonton","AB","T6Y7U8");
+            Person me = new Person(firstname, lastname, address, null);
+            return me;
+        }
+        #endregion
+
         #region Constructors
 
         //valid data
@@ -237,6 +249,75 @@ namespace TDDUnitTesting
         #endregion
 
         #region Methods
+        [Fact]
+        public void Change_First_And_Last_Name_Via_Method()
+        {
+            //Arrange
+            Person sut = Make_SUT_Instance();
+            string expectedFirstName = "Kandy";
+            string expectedLastName = "Kane";
+
+            //Act
+            sut.ChangeFullName("Kandy", "Kane");
+
+            //Assert
+            sut.FirstName.Should().Be(expectedFirstName);
+            sut.LastName.Should().Be(expectedLastName);
+        }
+
+        [Theory]
+        [InlineData(null,"Kane")]
+        [InlineData("","Kane")]
+        [InlineData("   ","Kane")]
+        [InlineData("Kandy",null)]
+        [InlineData("Kandy", "")]
+        [InlineData("Kandy", "   ")]
+        public void Throw_Exception_Changing_Both_Names_With_Bad_Names(string firstname, string lastname)
+        {
+            //Arrange (setup the needed code for doing the test)
+            Person sut = Make_SUT_Instance();
+
+            //Act (this is the action that is under testing)
+            //the act in this case is the capture of the exception that has been thrown
+            Action action = () => sut.ChangeFullName(firstname, lastname);
+
+            //Assert (check the results of the act against expected action)
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void Add_Employment_To_Employment_History()
+        {
+            //Arrange
+            Person sut = Make_SUT_Instance();
+            //setup an Employment instance
+            Employment employment = new Employment("PG I", SupervisoryLevel.TeamMember,
+                        new DateTime(2018, 03, 10));
+            List<Employment> positions = new List<Employment>();
+            positions.Add(employment);
+
+            //Act
+            sut.AddEmployment(employment);
+
+            //Assert
+            sut.EmploymentPositions.Count().Should().Be(1);
+            sut.EmploymentPositions.Should().Contain(employment); //collection test
+            sut.EmploymentPositions[0].Should().Be(employment); //element in collection test
+
+        }
+
+        [Fact]
+        public void Throw_Exception_During_Add_Employment_With_No_Parameter()
+        {
+            //Arrange
+            Person sut = Make_SUT_Instance();
+
+            //Act
+            Action action = () => sut.AddEmployment(null);
+
+            //Assert
+            action.Should().Throw<ArgumentNullException>().WithMessage("*employment required*");
+        }
         #endregion
     }
 }

@@ -56,5 +56,18 @@ namespace OOPsReview
             }
            
         }
+
+        public void ChangeFullName(string firstname, string lastname)
+        {
+            FirstName = firstname;
+            LastName = lastname;
+        }
+
+        public void AddEmployment(Employment position)
+        {
+            if (position == null)
+                throw new ArgumentNullException("Missing parameter, employment required");
+            EmploymentPositions.Add(position);
+        }
     }
 }
