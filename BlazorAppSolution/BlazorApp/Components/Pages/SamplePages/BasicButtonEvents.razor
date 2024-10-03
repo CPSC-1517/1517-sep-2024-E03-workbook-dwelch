@@ -1,0 +1,34 @@
+﻿@page "/basicevents"
+<PageTitle>Basic Events</PageTitle>
+
+<h3>Basic Button Events</h3>
+<h5 style="color:blue;font-style:italic;">Learning about buttons and events</h5>
+
+<blockquote style="background-color:aquamarine;">
+    This page will demonstrate the basics of button events. It will use a &lt;input&gt; control
+    to ask for some user input. It will use a &lt;button&gt; control to process the input.
+    It will demonstrate basic use of C# code to do the processing.
+</blockquote>
+
+<!-- The component page has 2 environments: html and C#
+    The current environment is dictated by the code that is executing
+    You switch between environments by use of the "at" symbol
+    The "at" symbol switching your environment to C#
+    Any html code that is executed automatically returns you to the default enviromnment of Html
+
+    the WelcomeMsg in the following paragraph is in the C# environment and is a variable.
+-->
+<p>@WelcomeMsg</p>
+
+@code {
+        /*
+        * the comment in the block as everything in this coding block is C#
+        * the directive @code indicates the coding block
+        */
+
+    /*
+    * vaiables tied to a control are created within the coding block
+    * data is automatically moved between the control and the variable
+    */
+    private string WelcomeMsg = "Let us get started";
+}
