@@ -1,0 +1,36 @@
+﻿@page "/controls"
+@rendermode InteractiveServer
+<PageTitle>Various Controls</PageTitle>
+<h3>Various Controls</h3>
+<h4>using multiple components</h4>
+
+<!-- add a custom css file to this page ONLY-->
+<HeadContent>
+    <link href="~/mycss.css" rel="stylesheet" />
+</HeadContent>
+
+<!-- this will be a 3 column one row combined component-->
+<section class="row">
+    <div class="col-md-4">
+        <h5>Textboxes</h5>
+    
+        @*referencing another blazor component (aka page)*@
+        <ControlsTextBoxes></ControlsTextBoxes> 
+
+    </div>
+    <div class="col-md-4">
+        <h5>RadioButtons/CheckBox/TextArea</h5>
+        <ControlsRadioCheckboxTextArea></ControlsRadioCheckboxTextArea>
+
+    </div>
+    <div class="col-md-4">
+        <h5>Lists/Slider</h5>
+        <ControlsListAndSlider></ControlsListAndSlider>
+
+    </div>
+</section>
+
+@code {
+ 
+
+}
