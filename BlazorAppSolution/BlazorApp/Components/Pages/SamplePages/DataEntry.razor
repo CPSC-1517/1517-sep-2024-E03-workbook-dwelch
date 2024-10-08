@@ -1,0 +1,166 @@
+﻿@page "/dataentry"
+<PageTitle>Data Entry</PageTitle>
+@rendermode InteractiveServer
+
+@*
+    since our Employment, Enum and Utilities have a different namespace then
+        our web page, we need to include those namespaces within the page
+*@
+
+@using OOPsReview;
+@using CommonMethods;
+
+<h1>Data Entry</h1>
+
+@*
+    we wish to add a blockquote but centrer the control on the page
+    to do so, we will use bootstrap formating with rows/columns
+*@
+<div class="row">
+    <div class="offset-1 col-md-10">
+        <blockquote style="background-color:gainsboro;">
+            <p>
+                This component will demonstrate how your page can handle validation of data input,
+                showing validation messages when you have a number of controls for data entry. This
+                component will validate the locate controls and create any validation messages for
+                invalid data. The messages can be collected using various techniques such as: List or
+                Dictionary.
+            </p>
+            <p>
+                This page will input data for an instance of the Employment class. This demo will
+                use the Employment class from the OOPs review. The SupervisoryLevel enum
+                class will also be brought into this project. One could have included the entire
+                class library as part of this solution instead of bringing in individual classes.
+            </p>
+        </blockquote>
+    </div>
+</div>
+
+@*
+    feedback area
+        success messages
+        error messages
+*@
+
+<!--
+    success area
+    check if there is a feedback message, if so display
+-->
+@if(feedbackmsg.Length > 0)
+{
+    <div class="alert alert-info">
+        <p>@feedbackmsg</p>
+    </div>
+}
+
+<!--
+    error message area
+    check if there is a error messages, if so display
+-->
+@if (errormsgs.Count > 0)
+{
+    <div class="alert alert-danger">
+       <p>Please fix the following issues:</p>
+       <ul>
+           @foreach(var error in errormsgs)
+            {
+                <!--
+                    due to the structure of a Dictionary entry
+                    there are two components: key and value
+                    Here we wish to just use the value
+
+                    If this was a List collection there is only
+                    one component, the string
+                    therfore you would NOT need the .Values
+                -->
+                <li>@errormsgs.Values</li>
+            }
+        </ul>
+    </div>
+}
+
+@*
+    form area
+    standard html controls
+    use bootstrap for formating
+    each control will be on a separate row
+    each row is stack top to bottom
+*@
+
+<fieldset>
+    <legend>Employment Data</legend>
+    <div class="row">
+        <div class="col-md-2">
+            <label for="title">Position Title</label>
+        </div>
+        <div class="col-md-2">
+            <input type="text" id="title" @bind="empTitle"
+                placeholder="enter position title" />
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-md-2">
+            <label for="startdate">Start Date</label>
+        </div>
+        <div class="col-md-2">
+            <input type="date" id="startdate" @bind="empStartDate"/>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <label for="years">Years in Position</label>
+        </div>
+        <div class="col-md-2">
+            <input type="number" id="years" @bind="empYears" 
+                step="0.1" min="0"
+                style="width:75px;"
+                placeholder="eg 3.4"/>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <label for="level">Supervisory Level</label>
+        </div>
+        <div class="col-md-2">
+            <!-- selection control-->
+            <select @bind="empLevel">
+                <!-- the option line -->
+                <option value="None">select ...</option>
+                <!--
+                    there is a line for each item in the Enum
+                    you could hard-code each option tag
+                    you can also access the Enum definition and
+                        extract each enum value (treating the Enum as a collection)
+                -->
+                @foreach (var item in Enum.GetValues(typeof(SupervisoryLevel)))
+                {
+                    //for are Enum will consider the value as a string
+                    <option value="@item">@item</option>
+                }
+            </select>
+        </div>
+    </div>
+
+</fieldset>
+
+@code {
+    private string feedbackmsg = "";
+
+    private Dictionary<string, string> errormsgs = new ();
+    //could be using a List<string> as well as this Dictionary
+    //priate List<string> errormsgs = new ();
+
+    private string empTitle = "";
+    private DateTime empStartDate;
+    private double empYears = 0.0;
+    private SupervisoryLevel empLevel;
+
+    protected override void OnInitialized()
+    {
+        empStartDate = DateTime.Today;
+        base.OnInitialized();
+    }
+}
