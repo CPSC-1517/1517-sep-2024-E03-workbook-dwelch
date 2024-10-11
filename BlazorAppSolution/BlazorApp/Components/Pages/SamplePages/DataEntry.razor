@@ -143,24 +143,26 @@
             </select>
         </div>
     </div>
-
+    <br/>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-outline-primary rounded-pill"
+                    @onclick="OnCollect">
+                Submit Employment
+            </button>
+        
+            &nbsp;&nbsp;
+      
+            <button type="submit" class="btn btn-outline-secondary rounded-pill"
+                      style="width:211px;" @onclick="OnClear">
+                Clear
+            </button>
+        </div>
+    </div>
 </fieldset>
 
 @code {
-    private string feedbackmsg = "";
+    // moved all code to a separate physical file called DataEntry.razor.cs
 
-    private Dictionary<string, string> errormsgs = new ();
-    //could be using a List<string> as well as this Dictionary
-    //priate List<string> errormsgs = new ();
-
-    private string empTitle = "";
-    private DateTime empStartDate;
-    private double empYears = 0.0;
-    private SupervisoryLevel empLevel;
-
-    protected override void OnInitialized()
-    {
-        empStartDate = DateTime.Today;
-        base.OnInitialized();
-    }
+    //can one have BOTH code in the coding block AND in the "code-behind" file: YES
 }
