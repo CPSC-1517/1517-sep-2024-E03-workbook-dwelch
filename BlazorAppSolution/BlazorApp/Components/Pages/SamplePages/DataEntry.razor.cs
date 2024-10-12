@@ -35,7 +35,45 @@ namespace BlazorApp.Components.Pages.SamplePages
 
         private void OnCollect()
         {
-            feedbackmsg = "inside oncollect";
+            feedbackmsg = ""; //remove all old messages
+            errormsgs.Clear(); //remove all old error messages
+
+            //primitive validation
+            //  presence
+            //  datatype/pattern
+            //  range of values
+
+            //Business Rules (aka your validation requirements)
+            //title must be presence, must have at least one character
+            //start date cannot be in the future
+            //years cannot be less than zero
+
+            if (string.IsNullOrWhiteSpace(empTitle))
+            {
+                //if there is a violation of the rule
+                //we wish to collect the error and display to the user
+                //we are using a Dictionary in this example that has two components
+                //  a) a unique value that is treated as a key
+                //  b) a string which represents the value associated with the key
+                errormsgs.Add("Title", "Title is required.");
+            }
+
+            if (empStartDate >= DateTime.Today.AddDays(1))
+            {
+                errormsgs.Add("Start Date", $"Start Date {empStartDate.ToString("MMM dd, yyyy")} should not be in the future.");
+            }
+
+            if(empYears < 0)
+            {
+                errormsgs.Add("Years", $"Years of {empYears} can not be negative. Can be partial years (eg 3.2).");
+
+            }
+            if (errormsgs.Count == 0)
+            {
+                //at this point in the collection, the data is "deemed" acceptable
+                //at this point your can continue the processing of your data
+                feedbackmsg = $"Entered data is  {empTitle}. {empStartDate}. {empYears}, {empLevel}";
+            }
         }
 
         //this method is being done as an async task as it has to wait for the user
@@ -52,6 +90,7 @@ namespace BlazorApp.Components.Pages.SamplePages
                  {"Clearing will lose all unsaved data. Are you sure you wish to continue? "};
             if (await jSRuntime.InvokeAsync<bool>("confirm", messageline))
             {
+                errormsgs.Clear(); //remove all old error messages
                 empTitle ="";
                 empStartDate = DateTime.Today;
                 empYears = 0;
