@@ -223,14 +223,16 @@ namespace OOPsReview
             //  if the default value for the parameter is used
             //the constructor should calculate the years from the supplied startdate
             //  to the current date
-            if(years > 0.0)
+            if(years != 0.0)
             {
                 Years = years;
             }
             else
             {
-                TimeSpan days = DateTime.Today - startdate;
-                Years = Math.Round((days.Days / 365.2), 1);
+               
+                    TimeSpan days = DateTime.Today - startdate;
+                    Years = Math.Round((days.Days / 365.2), 1);
+             
             }
         }
 
