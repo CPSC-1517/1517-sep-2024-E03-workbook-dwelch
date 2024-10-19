@@ -276,5 +276,29 @@ namespace OOPsReview
             TimeSpan days = DateTime.Today - startdate;
             Years = Math.Round((days.Days / 365.2), 1);
         }
+
+        //create a method that will receive a string and convert it to an acceptable instance of this class
+        //we are creating our own "Parse()" method
+        //this will ease the use of the class for an outside user similar to a int.Parse, double.Parse, etc.
+        //since this method will save no data and an instance of the class will yet to exist, we make this 
+        //  method a static method
+        public static Employment Parse(string line)
+        {
+            //split the string into their individual values
+            string[] datavalues = line.Split(',');
+            //test that sufficient data is on the line
+            //      title, startdate, level and years
+            if (datavalues.Length != 4)
+            {
+                throw new FormatException($"Invalid record format: {line}");
+            }
+            else
+            {
+                return new Employment(datavalues[0],
+                                    (SupervisoryLevel)Enum.Parse(typeof(SupervisoryLevel), datavalues[1]),
+                                    DateTime.Parse(datavalues[2]),
+                                    double.Parse(datavalues[3]));
+            }
+        }
     }
 }

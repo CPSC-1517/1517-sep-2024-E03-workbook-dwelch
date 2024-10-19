@@ -1,0 +1,71 @@
+﻿@page "/report"
+<PageTitle>Tabular Report</PageTitle>
+@rendermode InteractiveServer
+
+@using OOPsReview;
+@using CommonMethods;
+
+<h1>Employment Report</h1>
+<h4>using a tabular report presentation</h4>
+
+@if (feedbackmsg.Length > 0)
+{
+    <div class="alert alert-info">
+        <p>@feedbackmsg</p>
+    </div>
+}
+
+@if (errormsgs.Count > 0)
+{
+    <div class="alert alert-danger">
+        <p>Please fix the following issues:</p>
+        <ul>
+            @foreach (var error in errormsgs)
+            {
+                <!--
+                    If this was a List collection there is only
+                    one component, the string
+                    therfore you would NOT need the .Value
+                -->
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+@if (employments == null)
+{
+    <p>You need to have a csv file containing your employment data.</p>
+}
+else if (employments.Count == 0)
+{
+    <p>No employments to report</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Start Date</th>
+                <th>Level</th>
+                <th>Years</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in employments)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.StartDate.ToShortDateString()</td>
+                    <td>@item.Level</td>
+                    <td>@item.Years</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+   
+}
