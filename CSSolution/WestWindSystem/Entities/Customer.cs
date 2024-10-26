@@ -12,12 +12,17 @@ namespace WestWindSystem.Entities;
 [Index("AddressID", Name = "UX_Customers_AddressID", IsUnique = true)]
 public partial class Customer
 {
-    [Key]
-    [StringLength(5)]
+    // [...] is called an annotation
+    // annotation is applied to the property that follow the annotation
+    // by default Key is assumed an IDENTITY field
+    // add an attribute to the annotation to indicate that this key
+    //      is NOT an IDENTITY type key : DatabaseGenerated(..)
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [StringLength(5,ErrorMessage = "Customer ID is limited to 5 characters")]
     public string CustomerID { get; set; }
 
-    [Required]
-    [StringLength(40)]
+    [Required(ErrorMessage = "Company name is a required field")]
+    [StringLength(40, ErrorMessage = "Company Name is limited to 40 characters")]
     public string CompanyName { get; set; }
 
     [Required]
