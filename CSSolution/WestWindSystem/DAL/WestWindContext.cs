@@ -7,7 +7,10 @@ using WestWindSystem.Entities;
 
 namespace WestWindSystem.DAL;
 
-public partial class WestWindContext : DbContext
+//add a layer of security to the context class (hence database access) by allowing
+//  ONLY access from items within this project
+//this is done by changing the access type of the class from public to internal
+internal partial class WestWindContext : DbContext
 {
     public WestWindContext(DbContextOptions<WestWindContext> options)
         : base(options)

@@ -1,7 +1,33 @@
 ﻿@page "/"
-
 <PageTitle>Home</PageTitle>
+@using WestWindSystem.BLL;
+@using WestWindSystem.Entities;
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+Welcome to your new app. How to consume a service.
+
+<p>
+    WestWind Database Version Major: @buildVersion.Major Minor: @buildVersion.Minor
+       Build: @buildVersion.Build Version Date: @buildVersion.ReleaseDate.ToShortDateString()
+</p>
+
+@code{
+    private BuildVersion buildVersion{get;set;}
+
+    //inject the BuildVersionServices
+    [Inject]
+    public BuildVersionServices _buildVersionServices {get;set;}
+
+    protected override void OnInitialized()
+    {
+        //consume a service
+
+        //the service class exists for use within this component via the injection
+        //the actual access to the services is via the IServiceCollection
+        //my services were made available to this component due to the fact that the
+        //  registered services were done in the Program.cs file during the build of
+        //  the app
+        buildVersion = _buildVersionServices.BuildVersion_Get();
+    }
+}
