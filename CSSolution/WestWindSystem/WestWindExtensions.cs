@@ -60,6 +60,20 @@ namespace WestWindSystem
 
                 return new RegionServices(context);
             });
+            services.AddTransient<ShipperServices>((serviceProvider) =>
+            {
+
+                var context = serviceProvider.GetService<WestWindContext>();
+
+                return new ShipperServices(context);
+            });
+            services.AddTransient<ShipmentServices>((serviceProvider) =>
+            {
+
+                var context = serviceProvider.GetService<WestWindContext>();
+
+                return new ShipmentServices(context);
+            });
         }
     }
 }
