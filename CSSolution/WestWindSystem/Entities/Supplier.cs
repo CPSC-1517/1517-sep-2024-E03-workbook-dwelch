@@ -28,6 +28,7 @@ public partial class Supplier
 
     [Required]
     [StringLength(50)]
+    [EmailAddress(ErrorMessage ="Valid entered is not a valid email address structure")]
     public string Email { get; set; }
 
     public int AddressID { get; set; }

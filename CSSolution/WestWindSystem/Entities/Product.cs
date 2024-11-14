@@ -15,28 +15,42 @@ namespace WestWindSystem.Entities;
 [Index("SupplierID", Name = "SuppliersProducts")]
 public partial class Product
 {
+    //if the pkey is not an IDENTITY pkey you will need to add additional
+    //  annotation parameter(s) to your key annotation
+    // DatabaseGenerated()
+    //  values: DatabaseGeneratedOption.None (not a IDENTITY field, user must supply the pkey)
+    //          DatabaseGeneratedOption.IDENTITY (pkey is an IDENTITY field, default, can be added by is optional)
+    //          DatabaseGeneratedOption.Computed (this is used on attributes that are computed from
+    //                                              other record attributes, not seen on Keys
+    //                                               Assume you have attributes price and quantity
+    //                                                      you could compute totalcost = price * quantity
+    //                                             this field does not actually contain data and the entity
+    //                                                 will not expected data to be supplied)
     [Key]
     public int ProductID { get; set; }
 
-    [Required]
-    [StringLength(40)]
+    [Required(ErrorMessage = "Product name is required")]
+    [StringLength(40,ErrorMessage ="Product name is limited to 40 characters")]
     public string ProductName { get; set; }
 
     public int SupplierID { get; set; }
 
     public int CategoryID { get; set; }
 
-    [Required]
-    [StringLength(20)]
+    [Required(ErrorMessage = "Product quantity per unit is required")]
+    [StringLength(20, ErrorMessage = "Quantity per unit is limited to 20 characters")]
     public string QuantityPerUnit { get; set; }
 
+    [Range(0,int.MaxValue,ErrorMessage ="Minimum order quantity for product item is 0.")]
     public short? MinimumOrderQuantity { get; set; }
 
+    [Range(0.00, double.MaxValue, ErrorMessage ="Unit price cannot be negative.")]
     [Column(TypeName = "money")]
     public decimal UnitPrice { get; set; }
 
+    [Range(0.00, double.MaxValue, ErrorMessage = "Units on order cannot be negative.")]
     public int UnitsOnOrder { get; set; }
-
+    
     public bool Discontinued { get; set; }
 
     [ForeignKey("CategoryID")]
