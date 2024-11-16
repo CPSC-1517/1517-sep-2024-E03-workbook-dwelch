@@ -1,0 +1,118 @@
+﻿@page "/productcrud"
+<PageTitle>Product CRUD</PageTitle>
+<!-- remember: if you have buttons to click, you need the following line of code-->
+@rendermode InteractiveServer
+
+<!-- additional namespaces-->
+@using WestWindSystem.BLL;
+@using WestWindSystem.Entities;
+
+<h1>Product CRUD</h1>
+<h4>... sample of maintaining a database record using CRUD</h4>
+
+@if (feedbackmsg.Length > 0)
+{
+    <div class="alert alert-info">
+        <p>@feedbackmsg</p>
+    </div>
+}
+
+@if (errormsgs.Count > 0)
+{
+    <div class="alert alert-danger">
+        <p>Please fix the following issues:</p>
+        <ul>
+            @foreach (var error in errormsgs)
+            {
+                <!--
+                    If this was a List collection there is only
+                    one component, the string
+                    therfore you would NOT need the .Value
+                -->
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+<!-- EditForm this groups a bunch of controls as a single form
+              allows for adding additonal option to integrate with your form controls
+              contains a set of enhanced input controls
+
+    register an EditContext instance for this form
+
+     DataAnnotationsValidator   the DataAnnotationsValidator component is used within an
+                                EditForm to enable validation based on data annotations
+                                applied to model properties.
+
+     ValidationSummary displays a list of all validation errors
+                      show a summary of errors at the top of the form
+                      errors can be from model properties or custom messages
+                      this is optional
+
+    one can still use bootstrap customization of the form appearance
+-->
+
+<EditForm EditContext="@editContext">
+    <DataAnnotationsValidator />
+    <ValidationSummary/>
+    <div class="row">
+        <div class="offset-1 col-md-4">
+            <label for="productid" class="form-label">Product ID</label>
+            <!--
+                We can use enhanced input type controls with EditForm
+                No type is need for the EditForm control
+                Binding parameter: bind-Value is required when using EditForm controls
+            -->
+            <InputNumber @bind-Value="CurrentProduct.ProductID"
+                    class="form-control" id="productid"
+                    style="width:75px;" readonly />
+            <br/>
+            <label for="productname" class="form-label">Product Name</label>
+            <InputText @bind-Value="CurrentProduct.ProductName"
+                    class="form-control" id="productname"
+                    placeholder="product name" />
+            <ValidationMessage For="@(() => CurrentProduct.ProductName)"/>
+
+        </div>
+        <div class="offset-1 col-md-4">
+            <label for="quantityperunit" class="form-label">Quantity per Unit</label>
+            <InputText @bind-Value="CurrentProduct.QuantityPerUnit"
+                       class="form-control" id="quantityperunit"
+                       placeholder="qty per unit" />
+            <ValidationMessage For="@(() => CurrentProduct.QuantityPerUnit)" />
+            <br />
+            <label for="unitprice" class="form-label">Unit Price</label>
+            <InputNumber @bind-Value="CurrentProduct.UnitPrice"
+                       class="form-control" id="productname" />
+            <ValidationMessage For="@(() => CurrentProduct.UnitPrice)" />
+            minimum order qty
+            units on order
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private string feedbackmsg = "";
+    private List<string> errormsgs = new List<string>();
+
+    //for EditForm
+    private EditContext editContext;
+    private Product CurrentProduct = new Product();
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(CurrentProduct);
+        base.OnInitialized();
+    }
+
+    private Exception GetInnerException(Exception ex)
+    {
+        //drill down into your Exception until there are no more inner exceptions
+        //at this point you have the "real" error
+        while (ex.InnerException != null)
+            ex = ex.InnerException;
+        return ex;
+    }
+
+}
