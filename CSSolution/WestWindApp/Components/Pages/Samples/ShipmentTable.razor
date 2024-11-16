@@ -70,6 +70,23 @@
             //      the style specifies the height of the display area
 
             //depending on the zoom of window you may seem to lose some of the last line
+
+            //the shipment record has a field called ShipVia which is foreign key (1, 2, 3, etc)
+            //displaying that is meaningless to someone reading the data unless they were familiar with
+            //      the pkey value associated with each company
+            //solution: display the company name
+            //Problem: the name is in a different table
+
+            //If you look at the entities, records with fields used in sql scheme relationships
+            //      have virtual navigational properties (see bottom of entity)
+            //These properties allow you to have access to data in the related table
+
+            //How to use
+
+            //When you use the property just treat it as the name of an object so accessing the
+            //      desired field in the related table just needs the dot (.) operator
+            //In this example, the property is ShipViaNavigation which points to the Shippers table
+            //      and the desired field from the Shippers table was CompanyName
             <div class="overflow-scroll" style="height:450px;">
                 <table class="table table-striped">
                 <thead>
@@ -88,8 +105,8 @@
                             <td>@item.ShipmentID</td>
                             <td>@item.OrderID</td>
                             <td>@item.ShippedDate.ToShortDateString()</td>
-                            <td>@item.ShipVia</td>
-                            <td>@(string.Format("{0:#,##0.00}", item.FreightCharge))</td>
+                            <td>@item.ShipViaNavigation.CompanyName</td>
+                            <td align="right">@(string.Format("{0:#,##0.00}", item.FreightCharge))</td>
                         </tr>
                     }
                 </tbody>
@@ -109,6 +126,13 @@
     [Inject]
     ShipmentServices _shipmentServices { get; set; }
     private List<Shipment> datainfo = new List<Shipment>();
+
+
+    //this is required to obtain a collection of shipper data to use in the table
+    //  where we are using the navigational property to obtain data from the shipper collection
+    // [Inject]
+    // ShipperServices _shipperServices { get; set; }
+    // private List<Shipper> shipperList = new List<Shipper>();
 
 
     public void GetByYearAndMonth()
@@ -144,5 +168,19 @@
                 errormsgs.Add($"System error: {ex.Message}");
             }
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        //there are two techniques to allow the use of navigational properties on your page
+        //      a) bring in a dataset of the table to which you are attempting to navigate
+        //      b) use the .Include method on the query itself (see Shipment query for this technique in BLL ShipmentServices)
+
+        // Technique (a)
+        // this data set is needed to handle the navigation reference used on the table data cell
+        //           to display the shipper company name
+        // no other coding is needed, the system will match up the dataset to the usage in the table above
+        //shipperList = _shipperServices.Shipper_GetAll();
+        base.OnInitialized();
     }
 }
