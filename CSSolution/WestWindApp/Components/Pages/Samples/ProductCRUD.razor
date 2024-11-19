@@ -50,12 +50,15 @@
                       errors can be from model properties or custom messages
                       this is optional
 
+     ValidationMessage displays the message associated with the indicated entity field
+                      this is optional
+
     one can still use bootstrap customization of the form appearance
 -->
 
 <EditForm EditContext="@editContext">
     <DataAnnotationsValidator />
-    <ValidationSummary/>
+  @*   <ValidationSummary/> *@
     <div class="row">
         <div class="offset-1 col-md-4">
             <label for="productid" class="form-label">Product ID</label>
@@ -73,7 +76,43 @@
                     class="form-control" id="productname"
                     placeholder="product name" />
             <ValidationMessage For="@(() => CurrentProduct.ProductName)"/>
+            <br />
+            <label for="supplierlist" class="form-label">Select Supplier</label>
+            <InputSelect id="supplierlist" @bind-Value="CurrentProduct.SupplierID"
+                    class="form-control">
+                <option value="0">... select ...</option>   
+                @foreach(Supplier item in supplierList)
+                {
+                    @*
+                        on this option the selected parameter is testing
+                            the current supplier id of the supplier list against
+                            the current supplier id of the current produce record
 
+                        if there is a match, the select line item will be the
+                            line item shown on the page
+                    *@
+                    <option value="@item.SupplierID"
+                            selected="@(item.SupplierID == CurrentProduct.SupplierID)">
+                        @item.CompanyName       
+                    </option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => CurrentProduct.SupplierID)" />
+            <br />
+            <label for="categorylist" class="form-label">Select Category</label>
+            <InputSelect id="categorylist" @bind-Value="CurrentProduct.CategoryID"
+                         class="form-control">
+                <option value="0">... select ...</option>
+                @foreach (Category item in categoryList)
+                {
+                    
+                    <option value="@item.CategoryID"
+                            selected="@(item.CategoryID == CurrentProduct.CategoryID)">
+                        @item.CategoryName
+                    </option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => CurrentProduct.CategoryID)" />
         </div>
         <div class="offset-1 col-md-4">
             <label for="quantityperunit" class="form-label">Quantity per Unit</label>
@@ -86,8 +125,26 @@
             <InputNumber @bind-Value="CurrentProduct.UnitPrice"
                        class="form-control" id="productname" />
             <ValidationMessage For="@(() => CurrentProduct.UnitPrice)" />
-            minimum order qty
-            units on order
+            <br />
+            <label for="minimumorderqty" class="form-label">Min Order Qty</label>
+            <InputNumber @bind-Value="CurrentProduct.MinimumOrderQuantity"
+                         class="form-control" id="minimumorderqty" 
+                         placeholder="min order qty"/>
+            <ValidationMessage For="@(() => CurrentProduct.MinimumOrderQuantity)" />
+            <br />
+            <label for="unitsonorder" class="form-label">Units on Order</label>
+            <InputNumber @bind-Value="CurrentProduct.UnitsOnOrder"
+                         class="form-control" id="unitsonorder" />
+            <ValidationMessage For="@(() => CurrentProduct.UnitsOnOrder)" />
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="offset-1 col-md-10 text-center">
+            <button type="submit" class="btn btn-outline-primary rounded-pill"
+                        @onclick="OnCreate" style="width:180px;">
+                Create             
+            </button>
         </div>
     </div>
 </EditForm>
@@ -100,9 +157,22 @@
     private EditContext editContext;
     private Product CurrentProduct = new Product();
 
+    [Inject]
+    CategoryServices _categoryServices { get; set; }
+    private List<Category> categoryList = new List<Category>();
+
+    [Inject]
+    SupplierServices _supplierServices { get; set; }
+    private List<Supplier> supplierList = new List<Supplier>();
+
+
     protected override void OnInitialized()
     {
         editContext = new EditContext(CurrentProduct);
+
+        categoryList = _categoryServices.Catergory_GetAll();
+        supplierList = _supplierServices.Supplier_GetAll();
+
         base.OnInitialized();
     }
 
@@ -115,4 +185,8 @@
         return ex;
     }
 
+    private void OnCreate()
+    {
+        feedbackmsg = "inside on create";
+    }
 }
