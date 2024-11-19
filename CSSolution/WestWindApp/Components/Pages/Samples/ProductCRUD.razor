@@ -156,6 +156,9 @@
     //for EditForm
     private EditContext editContext;
     private Product CurrentProduct = new Product();
+    //needed for custom validation within the event code
+    //allows the user to use the ValidationMesssage controls of the form
+    private ValidationMessageStore validationMessageStore;
 
     [Inject]
     CategoryServices _categoryServices { get; set; }
@@ -165,10 +168,16 @@
     SupplierServices _supplierServices { get; set; }
     private List<Supplier> supplierList = new List<Supplier>();
 
+    [Inject]
+    ProductServices _productServices { get; set; }
+
 
     protected override void OnInitialized()
     {
+        //create the EditContext instance and tie to the entity of the form
         editContext = new EditContext(CurrentProduct);
+        //create validation MessageStore instance and indicate which EditContext it is associated with
+        validationMessageStore = new ValidationMessageStore(editContext);
 
         categoryList = _categoryServices.Catergory_GetAll();
         supplierList = _supplierServices.Supplier_GetAll();
@@ -187,6 +196,92 @@
 
     private void OnCreate()
     {
-        feedbackmsg = "inside on create";
+        //clear out all old messages
+        feedbackmsg = "";
+        errormsgs.Clear();
+
+        try
+        {
+            //check to see if the form passes the validation of the entity
+            if(editContext.Validate())
+            {
+                //if there are additional custom validation of your data
+                //  you can still do that within the event coding
+
+                validationMessageStore.Clear();
+
+                //custom validation for this form will check to see if a category
+                //  and supplier have been select (why: the list have a prompt that
+                //  has a non valid sql foreign key value)
+
+                //Problem:
+                // CategoryID is an integer
+                // the default of an integer is 0 ( a value)
+                // NO foreign key/primary key on the database is 0
+                //      if a proper selection is not done, then when the
+                //      record is attempted to be added to the the database
+                //      the database will thrown an exception
+
+                //Solution: custom validation
+                if(CurrentProduct.CategoryID == 0)
+                {
+                    //construction of the validation message store command
+                    // .Add to your instance of the form for the indicated field
+                    // parameter 1: the associated field to display the message
+                    //              looking for the "field identifier"
+                    //              use nameof(xxx) to supplier the "field identifier"
+                    // parameter 2: the message to display
+                    validationMessageStore.Add(editContext.Field(nameof(CurrentProduct.CategoryID)),
+                                "You must select a category.");
+                }
+                if (CurrentProduct.SupplierID == 0)
+                {
+                    validationMessageStore.Add(editContext.Field(nameof(CurrentProduct.SupplierID)),
+                                 "You must select a supplier.");
+                }
+
+                //any other custom validation can be done at this point
+
+                //once your custom validation is done, if there was any, you can check to see
+                //  what your validatMessageStore contains
+                //if there are any new messages , indicate to the form that the store has been alterd
+                //to do this, we will use the Linq method .Any()  to determine if something exists
+                //NOTE: the .Any() returns only a true or false; it does NOT return an actual records
+                //      the .Where() returns actual record
+                if(editContext.GetValidationMessages().Any())
+                {
+                    //notify the editcontext that there has be a change to the message store
+                    editContext.NotifyValidationStateChanged();
+                }
+                else
+                {
+                    //the program assumes that the data is clean and can be further processed
+
+                    //call the product services to receive the "good" data and add it to the database
+                    //call the appropriate service method and pass the current product instance
+                    int newproductid = _productServices.Product_Add(CurrentProduct);
+
+                    //if an error was thrown by the ProductServices or by the database
+                    //  control will be passed to the catch
+                    //if no error was thrown by the ProductServices or by the database
+                    //  one assumes the data is on the database: success
+                    //you need to communicate with the user this success
+                    feedbackmsg = $"Product {CurrentProduct.ProductName} (ID: {newproductid}) has been added to the database.";
+                }
+            }
+
+        }
+        catch (ArgumentNullException ex)
+        {
+            errormsgs.Add($"Missing Data: {GetInnerException(ex).Message}");
+        }
+        catch (ArgumentException ex)
+        {
+            errormsgs.Add($"Data Issue: {GetInnerException(ex).Message}");
+        }
+        catch(Exception ex)
+        {
+            errormsgs.Add($"System Error: {GetInnerException(ex).Message}");
+        }
     }
 }
