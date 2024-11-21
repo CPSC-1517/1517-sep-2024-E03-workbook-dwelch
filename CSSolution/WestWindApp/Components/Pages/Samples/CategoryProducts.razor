@@ -35,7 +35,129 @@
     </div>
 }
 
+<div class="col-md-12">
+    <label for="catlist">Select a category</label>&nbsp;&nbsp;
+    <select id="catlist" @bind="categoryidarg">
+        <option value="0">... select ...</option>
+        @foreach(Category item in categoryList)
+        {
+            <option value="@item.CategoryID">
+                @item.CategoryName
+            </option>
+        }
+    </select>&nbsp;&nbsp;
+    <button type="submit" class="btn btn-primary rounded-pill"
+                @onclick="OnFetch">Fetch Products</button>
+</div>
+<div class="row">
+    <div class="offset-2 col-md-8">
+        @if (productList.Count == 0)
+        {
+            <p>No data found for requested query</p>
+        }
+        else
+        {
+            <div class="overflow-scroll" style="height:600px;">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>Product</th>
+                            <th>Supplier</th>
+                            <th>Unit Size</th>
+                            <th>Disc.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in productList)
+                        {
+                            // the link on the display line will send the display to the crud page
+                            // HOWEVER, an important piece of data also needs to be send to the crud page
+                            //          that piece of data is the pkey of the product to display on
+                            //                  the crud
+                            // Solution: The "View" needs to be an anchor tag to be able to transfer
+                            //              the user to the CRUD page
+                            //           we can add that information to the href as a routing parameter
+                            //           the crud page will need to alter its @page directive to capture
+                            //                the routing parameter
+                            //           on this page add the parameter value to send to the href
+                            <tr>
+                                <td><a href="/productcrud/@item.ProductID">View</a></td>
+                                <td>@item.ProductName</td>
+                                <td>@item.Supplier.CompanyName</td> <!-- using nav property -->
+                                <td>@item.QuantityPerUnit</td>
+                                <!-- the ternary operation will only display a value
+                                      if the value makes sense
+                                     Only discontinued products will have a value displayed
+                                -->
+                                <td>@(item.Discontinued ? "Yes" : "")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
 @code {
     private string feedbackmsg = "";
     private List<string> errormsgs = new List<string>();
+
+    private int categoryidarg;
+
+    [Inject]
+    CategoryServices _categoryServices { get; set; }
+    private List<Category> categoryList = new List<Category>();
+
+    [Inject]
+    SupplierServices _supplierServices { get; set; }
+    private List<Supplier> supplierList = new List<Supplier>();
+
+    [Inject]
+    ProductServices _productServices { get; set; }
+    private List<Product> productList = new List<Product>();
+
+    protected override void OnInitialized()
+    {
+        categoryList = _categoryServices.Catergory_GetAll();
+        supplierList = _supplierServices.Supplier_GetAll();
+
+        base.OnInitialized();
+    }
+
+    private Exception GetInnerException(Exception ex)
+    {
+        //drill down into your Exception until there are no more inner exceptions
+        //at this point you have the "real" error
+        while (ex.InnerException != null)
+            ex = ex.InnerException;
+        return ex;
+    }
+
+    private void OnFetch()
+    {
+        feedbackmsg = "";
+        errormsgs.Clear();
+
+        //was a category selected??
+        if (categoryidarg == 0)
+        {
+            feedbackmsg = "You must select a category to view products.";
+        }
+        else
+        {
+            //get the products for the category
+            //make a call to the class library services to get the list of products
+            try
+            {
+                //use the product service for your query
+                productList = _productServices.Product_GetByCategory(categoryidarg);
+            }
+            catch(Exception ex)
+            {
+                errormsgs.Add($"System Error: {GetInnerException(ex).Message}");
+            }
+        }
+    }
 }
