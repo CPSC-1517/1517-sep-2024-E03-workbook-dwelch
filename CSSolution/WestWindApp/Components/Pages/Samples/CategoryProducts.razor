@@ -1,0 +1,41 @@
+﻿@page "/categoryproducts"
+<PageTitle>Category Products</PageTitle>
+<!-- remember: if you have buttons to click, you need the following line of code-->
+@rendermode InteractiveServer
+
+<!-- additional namespaces-->
+@using WestWindSystem.BLL;
+@using WestWindSystem.Entities;
+
+<h1>View Products by Category</h1>
+<h4>... display a collect of products for a category to sample from for CRUD update/delete</h4>
+
+@if (feedbackmsg.Length > 0)
+{
+    <div class="alert alert-info">
+        <p>@feedbackmsg</p>
+    </div>
+}
+
+@if (errormsgs.Count > 0)
+{
+    <div class="alert alert-danger">
+        <p>Please fix the following issues:</p>
+        <ul>
+            @foreach (var error in errormsgs)
+            {
+                <!--
+                    If this was a List collection there is only
+                    one component, the string
+                    therfore you would NOT need the .Value
+                -->
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    private string feedbackmsg = "";
+    private List<string> errormsgs = new List<string>();
+}

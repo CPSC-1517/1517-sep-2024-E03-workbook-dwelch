@@ -199,6 +199,7 @@
         //clear out all old messages
         feedbackmsg = "";
         errormsgs.Clear();
+        validationMessageStore.Clear();
 
         try
         {
@@ -208,7 +209,7 @@
                 //if there are additional custom validation of your data
                 //  you can still do that within the event coding
 
-                validationMessageStore.Clear();
+               
 
                 //custom validation for this form will check to see if a category
                 //  and supplier have been select (why: the list have a prompt that
