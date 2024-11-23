@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -133,6 +134,52 @@ namespace WestWindSystem.BLL
             //Optionally, you could return this value to the calling process
             return item.ProductID;
         }
+
+        public int Product_Update(Product item)
+        {
+            //was data actually passed to the method
+            if (item == null)
+            {
+                throw new ArgumentNullException("You must supply the product information");
+            }
+
+            bool exists = false;
+            //does the product actual still exists on the database
+            exists = _context.Products
+                            .Any(p => p.ProductID == item.ProductID);
+            if(!exists)
+            {
+                throw new ArgumentException($"Product {item.ProductName} " +
+                   $" of size {item.QuantityPerUnit} is not on file. Check for the product again.");
+            }
+
+            //are there any other business rules to check
+            //check to see if the combination is on file for a DIFFERENT product 
+            //.Any(predicate)
+            exists = _context.Products
+                            .Any(p => p.SupplierID == item.SupplierID
+                                   && p.ProductName.Equals(item.ProductName)
+                                   && p.QuantityPerUnit.Equals(item.QuantityPerUnit)
+                                   && p.ProductID != item.ProductID);
+            if (exists)
+            {
+                throw new ArgumentException($"Product {item.ProductName} from " +
+                    $" {item.Supplier.CompanyName} of size {item.QuantityPerUnit} already on file.");
+            }
+
+            EntityEntry<Product> updating = _context.Entry(item);
+            updating.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+
+            //Commit
+            
+            //After the successful commit to the database
+            //the resulting value from the database is the "number of rows affected"
+
+            return _context.SaveChanges();
+
+           
+        }
+
         #endregion
         #endregion
     }

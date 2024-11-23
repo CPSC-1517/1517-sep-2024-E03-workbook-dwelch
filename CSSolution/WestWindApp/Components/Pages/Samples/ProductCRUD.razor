@@ -190,14 +190,6 @@
 
     protected override void OnInitialized()
     {
-        //create the EditContext instance and tie to the entity of the form
-        editContext = new EditContext(CurrentProduct);
-        //create validation MessageStore instance and indicate which EditContext it is associated with
-        validationMessageStore = new ValidationMessageStore(editContext);
-
-        categoryList = _categoryServices.Catergory_GetAll();
-        supplierList = _supplierServices.Supplier_GetAll();
-
         //when the page is first render, we need to determind if the page was called with
         //   a pkey parameter value
         // No value: assumption is a NEW (create) product will be done, nothing to lookup
@@ -207,6 +199,14 @@
         //since the productid is a nullable variable, add the .Value to obtain the value
         if (productid.HasValue)
             CurrentProduct = _productServices.Product_GetByID(productid.Value);
+
+        //create the EditContext instance and tie to the entity of the form
+        editContext = new EditContext(CurrentProduct);
+        //create validation MessageStore instance and indicate which EditContext it is associated with
+        validationMessageStore = new ValidationMessageStore(editContext);
+
+        categoryList = _categoryServices.Catergory_GetAll();
+        supplierList = _supplierServices.Supplier_GetAll();
 
         base.OnInitialized();
     }

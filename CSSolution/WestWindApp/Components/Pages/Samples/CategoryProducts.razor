@@ -48,11 +48,29 @@
     </select>&nbsp;&nbsp;
     <button type="submit" class="btn btn-primary rounded-pill"
                 @onclick="OnFetch">Fetch Products</button>
+    <!--
+        these two button will demonstrate ways that you can call
+        another page from an existing page
+        one button will have a NavLink to the new page
+        one button will call an event method on this page which
+            will navigate to the new page
+    -->
+    &nbsp;&nbsp;
+    <button type="submit" class="btn btn-light rounded-pill">
+        <NavLink href="productcrud">NEW CRUD (via navlink)</NavLink>
+    </button>
+    &nbsp;&nbsp;
+    <button type="submit" class="btn btn-light rounded-pill" @onclick="GoTo">
+        NEW CRUD (via event)
+    </button>
 </div>
+<br />
+<br />
 <div class="row">
     <div class="offset-2 col-md-8">
         @if (productList.Count == 0)
         {
+            
             <p>No data found for requested query</p>
         }
         else
@@ -118,6 +136,9 @@
     ProductServices _productServices { get; set; }
     private List<Product> productList = new List<Product>();
 
+    [Inject]
+    private NavigationManager _navManager { get; set; }
+
     protected override void OnInitialized()
     {
         categoryList = _categoryServices.Catergory_GetAll();
@@ -159,5 +180,10 @@
                 errormsgs.Add($"System Error: {GetInnerException(ex).Message}");
             }
         }
+    }
+
+    private void GoTo()
+    {
+        _navManager.NavigateTo("productcrud");
     }
 }
