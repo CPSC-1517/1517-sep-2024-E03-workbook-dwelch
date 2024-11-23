@@ -143,6 +143,11 @@ namespace WestWindSystem.BLL
                 throw new ArgumentNullException("You must supply the product information");
             }
 
+            //SPECIAL!!!!!!! use to check that the result of a productid not
+            //  being on file when the update is done
+            //Comment out OR remove after doing the message check
+            //item.ProductID = 9999;
+
             bool exists = false;
             //does the product actual still exists on the database
             exists = _context.Products
