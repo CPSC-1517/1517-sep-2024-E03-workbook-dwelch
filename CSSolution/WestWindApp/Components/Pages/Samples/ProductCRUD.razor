@@ -131,7 +131,7 @@
             <ValidationMessage For="@(() => CurrentProduct.QuantityPerUnit)" />
             <br />
             <label for="unitprice" class="form-label">Unit Price</label>
-            <InputNumber @bind-Value="CurrentProduct.UnitPrice"
+            <InputNumber @bind-Value="FormatUnitPrice"
                        class="form-control" id="productname" />
             <ValidationMessage For="@(() => CurrentProduct.UnitPrice)" />
             <br />
@@ -159,6 +159,23 @@
                     @onclick="OnUpdate" style="width:180px;">
                 Update
             </button>
+             &nbsp;&nbsp;
+             @if(CurrentProduct.Discontinued)
+            {
+                <button type="submit" class="btn btn-outline-secondary rounded-pill"
+                        @onclick="OnActivate" style="width:180px;">
+                    Activate
+                </button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-outline-secondary rounded-pill"
+                        @onclick="OnDiscontinued" style="width:180px;">
+                    Discontinue
+                </button>
+            }
+
+            
             &nbsp;&nbsp;
             <button type="submit" class="btn btn-outline-secondary rounded-pill"
                     @onclick="OnClear" style="width:180px;">
@@ -208,6 +225,12 @@
 
     [Inject]
     protected NavigationManager _navManager { get; set; }
+
+    private decimal FormatUnitPrice
+    {
+        get { return Math.Round(CurrentProduct.UnitPrice, 2); }
+        set { CurrentProduct.UnitPrice = value; }
+    }
 
 
     protected override void OnInitialized()
@@ -403,6 +426,76 @@
         }
     }
 
+    private void OnDiscontinued()
+    {
+        //clear out all old messages
+        feedbackmsg = "";
+        errormsgs.Clear();
+        validationMessageStore.Clear();
+
+        try
+        {
+            //check to see if the form passes the validation of the entity
+            if (editContext.Validate())
+            {
+
+                if (CurrentProduct.CategoryID == 0)
+                {
+                    validationMessageStore.Add(editContext.Field(nameof(CurrentProduct.CategoryID)),
+                                "You must select a category.");
+                }
+                if (CurrentProduct.SupplierID == 0)
+                {
+                    validationMessageStore.Add(editContext.Field(nameof(CurrentProduct.SupplierID)),
+                                 "You must select a supplier.");
+                }
+
+                if (editContext.GetValidationMessages().Any())
+                {
+                    editContext.NotifyValidationStateChanged();
+                }
+                else
+                {
+                    //the program assumes that the data is clean and can be further processed
+
+                    int rowsaffected = _productServices.Product_LogicalDelete(CurrentProduct);
+
+                    //the rowsaffected will dictate the message sent to the user
+                    if (rowsaffected != 0)
+                    {
+                        feedbackmsg = $"Product {CurrentProduct.ProductName} (ID: {CurrentProduct.ProductID}) has been discontinued.";
+                    }
+                    else
+                    {
+                        feedbackmsg = $"Product {CurrentProduct.ProductName} " +
+                                    $" (ID: {CurrentProduct.ProductID}) was not found. " +
+                                    " Check to see if the product still exists on file.";
+                    }
+                }
+            }
+
+        }
+        catch (ArgumentNullException ex)
+        {
+            errormsgs.Add($"Missing Data: {GetInnerException(ex).Message}");
+        }
+        catch (ArgumentException ex)
+        {
+            errormsgs.Add($"Data Issue: {GetInnerException(ex).Message}");
+        }
+        catch (Exception ex)
+        {
+            errormsgs.Add($"System Error: {GetInnerException(ex).Message}");
+        }
+    }
+
+    private void OnActivate()
+    {
+        feedbackmsg = "";
+        errormsgs.Clear();
+        validationMessageStore.Clear();
+        feedbackmsg = "Inside Activate";
+    }
     private async Task OnClear()
     {
         object[] message = new object[] {"Clearing the form will lose all unsaved data. Are you sure you wish to continue?"};
