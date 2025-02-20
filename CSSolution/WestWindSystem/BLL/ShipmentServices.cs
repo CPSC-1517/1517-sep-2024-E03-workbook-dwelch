@@ -62,6 +62,28 @@ namespace WestWindSystem.BLL
                                                 .OrderBy(x => x.ShippedDate);
             return info.ToList();
         }
+
+        public int Shipment_GetByYearAndMonth_Count(int year, int month)
+        {
+           
+            IEnumerable<Shipment> info = _context.Shipments
+                                                .Where(x => x.ShippedDate.Year == year
+                                                         && x.ShippedDate.Month == month);
+            return info.Count();
+        }
+        public List<Shipment> Shipment_GetByYearAndMonth_Pagination(int year, int month, int itemsPerPage, int currentPage)
+        {
+            //the Skip will skip over x number of records
+            //the Take will take x number of records
+            IEnumerable<Shipment> info = _context.Shipments
+                                                .Include(x => x.ShipViaNavigation)
+                                                .Where(x => x.ShippedDate.Year == year
+                                                         && x.ShippedDate.Month == month)
+                                                .OrderBy(x => x.ShippedDate)
+                                                .Skip(itemsPerPage * (currentPage -1))
+                                                .Take(itemsPerPage);
+            return info.ToList();
+        }
         #endregion
     }
 }
