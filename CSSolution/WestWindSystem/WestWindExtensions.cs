@@ -43,7 +43,7 @@ namespace WestWindSystem
             //  will be available
             services.AddTransient<BuildVersionServices>((serviceProvider) =>
                 {
-                    //this statement obtains the context information registered above
+                   
                     var context = serviceProvider.GetService<WestWindContext>();
 
                     //create an instance of the service class and register the said class
